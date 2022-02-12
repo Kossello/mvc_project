@@ -1,0 +1,15 @@
+{
+    "name": "hordin/mvc_project",
+    "authors": [
+        {
+            "name": "otipharmdatapro",
+            "email": "k.hordin@otipharmdatapro.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "app\\":"."
+        }
+    },
+    "require": {}
+}
