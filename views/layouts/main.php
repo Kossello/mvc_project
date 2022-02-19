@@ -8,6 +8,11 @@
     <title>MVC</title>
 </head>
 <body>
-{{content}}
+<a href="/">Main page</a>
+<a href="/login">Login page</a>
+<a href="/signup">Sign up page</a>
+<div class="wrapper">
+    {{content}}
+</div>
 </body>
 </html>

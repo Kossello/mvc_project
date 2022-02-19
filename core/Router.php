@@ -4,9 +4,11 @@
     class Router {
         protected array $routes = [];
         protected Request $request;
+        protected Response $response;
 
-        public function __construct($request) {
+        public function __construct($request, $response) {
             $this->request = $request;
+            $this->response = $response;
         }
 
         /**
@@ -25,19 +27,23 @@
             $method = $this->request->getMethod();
             $callback = $this->routes[$method][$path] ?? false;
             if (!$callback) {
-                return "page not found";
+                $this->response->setStatusCode(404);
+                return $this->renderView('_404');
             }
             if (is_string($callback)) {
                 return $this->renderView($callback);
             }
 
-            return call_user_func($callback);
+            if(is_array($callback)){
+                $callback[0] = new $callback[0]();
+            }
 
+            return call_user_func($callback, $this->request);
         }
 
-        public function renderView($view) {
+        public function renderView($view, $params=[]) {
             $layoutContent = $this->layoutContent();
-            $viewContent = $this->renderOnlyView($view);
+            $viewContent = $this->renderOnlyView($view, $params);
             return str_replace('{{content}}', $viewContent, $layoutContent);
         }
 
@@ -47,7 +53,10 @@
             return ob_get_clean();
         }
 
-        public function renderOnlyView($view) {
+        public function renderOnlyView($view, $params) {
+            foreach ($params as $key => $value){
+                $$key = $value;
+            }
             ob_start();
             require_once Application::$ROOT_DIR . "/views/$view.php";
             return ob_get_clean();
